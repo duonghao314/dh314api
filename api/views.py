@@ -114,7 +114,7 @@ class AuthRefreshView(APIView):
         serializer = serializers.RefreshTokenSerializer(data=request.data)
 
         if serializer.is_valid():
-            token = serializer.data.get('token')
+            token = serializer.data.get('refresh_token')
             decoded_token = jwt.decode(token, settings.SECRET_KEY)
 
             try:
@@ -375,6 +375,7 @@ class UpdateProfileView(APIView):
                 return Response(status=status.HTTP_200_OK)
             else:
                 prof = Profile()
+                prof.id = len(profiles)+1
                 prof.uuid = acc.uuid
                 prof.fullname = fullname
                 prof.address = address

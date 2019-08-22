@@ -110,7 +110,7 @@ class UpdateProfileSerializer(serializers.Serializer):
 
 
 class RefreshTokenSerializer(serializers.Serializer):
-    token = serializers.CharField(max_length=500)
+    refresh_token = serializers.CharField(max_length=500)
 
 
 class ChangePasswordSerializer(serializers.Serializer):
