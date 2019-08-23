@@ -381,7 +381,7 @@ class UpdateProfileView(APIView):
                 prof.address = address
                 prof.country = country
                 prof.phone = phone
-                if date_of_birth != None:
+                if len(date_of_birth)==10:
                     prof.date_of_birth = date_of_birth
                 else:
                     prof.date_of_birth = datetime.datetime(2000,1,1)

@@ -53,22 +53,23 @@ class Account(AbstractBaseUser, PermissionsMixin):
 class Profile(models.Model):
     id = models.IntegerField(primary_key=True, unique=True, auto_created=True)
     uuid = models.TextField(unique=True, default='')
-    fullname = models.CharField(max_length=50,blank=True)
-    address = models.CharField(max_length=100,blank=True)
-    country = models.CharField(max_length=32,blank=True)
-    phone = models.CharField(max_length=15,blank=True)
-    date_of_birth = models.DateField(blank=True, default=datetime.datetime(2000,1,1))
+    fullname = models.CharField(max_length=50, blank=True)
+    address = models.CharField(max_length=100, blank=True)
+    country = models.CharField(max_length=32, blank=True)
+    phone = models.CharField(max_length=15, blank=True)
+    date_of_birth = models.DateField(blank=True, null=True,
+                                     default=datetime.datetime(2000, 1, 1))
 
     def __str__(self):
         return self.uuid
 
     def to_dic(self):
         dict = {
-            'fullname':self.fullname,
+            'fullname': self.fullname,
             'date_of_birth': self.date_of_birth,
             'address': self.address,
             'country': self.country,
-            'phone':self.phone
+            'phone': self.phone
         }
         return dict
 
