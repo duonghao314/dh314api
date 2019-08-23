@@ -1,6 +1,6 @@
 import uuid
 import pytz
-import datime
+import datetime
 
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
