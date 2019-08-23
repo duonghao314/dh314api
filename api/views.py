@@ -384,7 +384,7 @@ class UpdateProfileView(APIView):
                 if len(date_of_birth)==10:
                     prof.date_of_birth = date_of_birth
                 else:
-                    prof.date_of_birth = datetime.datetime(2000,1,1)
+                    prof.date_of_birth = datetime(2000,1,1)
                 prof.save()
                 return Response(status=status.HTTP_200_OK)
 
