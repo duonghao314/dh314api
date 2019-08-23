@@ -162,12 +162,11 @@ class AuthrevokeView(APIView):
             try:
                 to_delete_token = AccessToken.objects.get(
                     token=str(decoded_token))
-                if to_delete_token.user != str(request.user.username):
+                if to_delete_token.user.username != str(request.user.username):
                     return Response({
                         "message": "Access token and refresh token do not "
                                    "match",
-                        "user": to_delete_token.user,
-                        "user2": request.user.username
+                        
                     },
                         status=status.HTTP_400_BAD_REQUEST)
                 print(to_delete_token.user)
