@@ -166,7 +166,7 @@ class AuthrevokeView(APIView):
                     return Response({
                         "message": "Access token and refresh token do not "
                                    "match",
-                        
+
                     },
                         status=status.HTTP_400_BAD_REQUEST)
                 print(to_delete_token.user)

@@ -16,7 +16,7 @@ urlpatterns = [
     path('auth/verify/', views.AuthVerifyView.as_view()),
     path('auth/me/', views.AuthMEView.as_view()),
     path('accounts/', views.AccountCreateView.as_view()),
-    path('delete/', views.DeleteView.as_view()),
+    path('account/', views.DeleteView.as_view()),
     path('account/email', views.UpdateEmailView.as_view()),
     path('profile/', views.UpdateProfileView.as_view()),
     path('account/send-confirmed-email/',
