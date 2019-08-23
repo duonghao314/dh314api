@@ -373,7 +373,7 @@ class UpdateProfileView(APIView):
                     prof.country = country
                 if phone != '':
                     prof.phone = phone
-                if date_of_birth != None:
+                if date_of_birth != '':
                     print(date_of_birth)
                     prof.date_of_birth = date_of_birth
                 prof.save()
