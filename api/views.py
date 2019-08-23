@@ -368,7 +368,7 @@ class UpdateProfileView(APIView):
                     prof.country = country
                 if phone != '':
                     prof.phone = phone
-                if date_of_birth != '':
+                if date_of_birth != None:
                     print(date_of_birth)
                     prof.date_of_birth = date_of_birth
                 prof.save()
@@ -381,7 +381,10 @@ class UpdateProfileView(APIView):
                 prof.address = address
                 prof.country = country
                 prof.phone = phone
-                prof.date_of_birth = date_of_birth
+                if date_of_birth != None:
+                    prof.date_of_birth = date_of_birth
+                else:
+                    prof.date_of_birth = "2000-01-01"
                 prof.save()
                 return Response(status=status.HTTP_200_OK)
 

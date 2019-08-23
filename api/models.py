@@ -56,7 +56,7 @@ class Profile(models.Model):
     address = models.CharField(max_length=100,blank=True)
     country = models.CharField(max_length=32,blank=True)
     phone = models.CharField(max_length=15,blank=True)
-    date_of_birth = models.DateField(default = "2000-01-01")
+    date_of_birth = models.DateField(default = )
 
     def __str__(self):
         return self.uuid
