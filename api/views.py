@@ -165,7 +165,10 @@ class AuthrevokeView(APIView):
                 if to_delete_token.user != str(request.user.username):
                     return Response({
                         "message": "Access token and refresh token do not "
-                                   "match"},
+                                   "match",
+                        "user": to_delete_token.user,
+                        "user2": request.user.username
+                    },
                         status=status.HTTP_400_BAD_REQUEST)
                 print(to_delete_token.user)
                 to_delete_token.delete()
@@ -375,16 +378,16 @@ class UpdateProfileView(APIView):
                 return Response(status=status.HTTP_200_OK)
             else:
                 prof = Profile()
-                prof.id = len(profiles)+1
+                prof.id = len(profiles) + 1
                 prof.uuid = acc.uuid
                 prof.fullname = fullname
                 prof.address = address
                 prof.country = country
                 prof.phone = phone
-                if len(date_of_birth)==10:
+                if len(date_of_birth) == 10:
                     prof.date_of_birth = date_of_birth
                 else:
-                    prof.date_of_birth = datetime(2000,1,1)
+                    prof.date_of_birth = datetime(2000, 1, 1)
                 prof.save()
                 return Response(status=status.HTTP_200_OK)
 
