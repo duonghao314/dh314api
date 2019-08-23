@@ -39,8 +39,11 @@ class AuthView(APIView):
             username = serializer.data.get('username')
             password = serializer.data.get('password')
 
-            # try:
-            acc = Account.objects.get(username=username)
+            try:
+                acc = Account.objects.get(username=username)
+            except:
+                return Response({"message": "Authentication failed"},
+                                status=status.HTTP_400_BAD_REQUEST)
             if acc.check_password(raw_password=password):
 
                 """Return accesstoken"""
