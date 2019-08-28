@@ -4,6 +4,7 @@ from django.core.validators import validate_email
 
 from rest_framework import serializers
 from iso3166 import countries
+import phonenumbers
 
 from .models import Account
 from . import validations
@@ -46,14 +47,18 @@ class AccountSerializer(serializers.Serializer):
         if value == '':
             raise serializers.ValidationError('This field is required')
         else:
-            users = Account.objects.all()
-            if value in [user.username for user in users]:
+            if Account.objects.filter(username=value).exists():
                 raise serializers.ValidationError('Username was taken')
         return value
 
-    def validate_password(self, value):
+    def validate_password(self, request, value):
         if value == '':
             raise serializers.ValidationError('This field is required')
+        else:
+            username = request.user.username
+            account = Account.objects.get(username=username)
+            if not account.check_password(raw_password=value):
+                raise serializers.ValidationError('Incorrect password')
         return value
 
     def validate_email(self, value):
@@ -82,31 +87,34 @@ class UpdateProfileSerializer(serializers.Serializer):
     phone = serializers.CharField(max_length=20, allow_blank=True)
     date_of_birth = serializers.CharField(max_length=10, allow_blank=True)
 
-    def validate_country(self, value):
-        if value not in countries:
+    def validate(self, attrs):
+        # Validate Country
+        if attrs['country'] == '' or attrs['country'] == None:
+            attrs['country'] = ''
+        elif attrs['country'] not in countries:
             raise serializers.ValidationError('Invalid country')
-        return value
 
-    def validate_phone(self, value):
-        if len(value) <= 15 and len(value) >= 8:
-            try:
-                phone_int = int(value)
-            except:
+        # Validate phone number
+        country_code = None
+        if attrs['country'] != '':
+            country_code = countries[attrs['country']][1]
+        try:
+            phone_number = phonenumbers.parse(attrs['phone'], country_code)
+            if not phonenumbers.is_valid_number(phone_number):
                 raise serializers.ValidationError('Invalid phone number')
-        else:
+        except:
             raise serializers.ValidationError('Invalid phone number')
-        return value
 
-    def validate_date_of_birth(self, value):
-        if value == '':
-            return value
+        # Validate date of birth
+        if attrs['date_of_birth'] == '' or attrs['date_of_birth'] == None:
+            attrs['date_of_birth'] = ''
         else:
             try:
-                datetime.datetime.strptime(value, '%Y-%m-%d')
-
+                datetime.datetime.strftime(attrs['date_of_birth'], '%Y-%m-%d')
             except:
                 raise serializers.ValidationError('Invalid date')
-            return value
+
+        return attrs
 
 
 class RefreshTokenSerializer(serializers.Serializer):
@@ -124,6 +132,7 @@ class ChangePasswordSerializer(serializers.Serializer):
         if attrs['password'] != attrs['confirmed_password']:
             raise serializers.ValidationError('Confirmed password not match')
         return attrs
+
 
 class RevokeTokenSerializer(serializers.Serializer):
     refresh_token = serializers.CharField(max_length=500)

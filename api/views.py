@@ -1,4 +1,6 @@
 import json
+import uuid
+
 import jwt
 from datetime import timedelta, datetime, timezone
 
@@ -253,7 +255,8 @@ class AccountCreateView(APIView):
             acc = Account()
             acc.username = username
             acc.password = make_password(password)
-            acc.email = email
+            if email != '':
+                acc.email = email
             acc.save()
             return Response(status=status.HTTP_201_CREATED)
         else:
@@ -301,24 +304,21 @@ class ChangePasswordView(APIView):
     def patch(self, request):
         serializer = serializers.ChangePasswordSerializer(data=request.data)
         if serializer.is_valid():
-            current_password = serializer.data.get('current_password')
+            # current_password = serializer.data.get('current_password')
             password = serializer.data.get('password')
-            confirmed_password = serializer.data.get('confirmed_password')
+            # confirmed_password = serializer.data.get('confirmed_password')
             acc = Account.objects.get(username=request.user.username)
-            if not acc.check_password(raw_password=current_password):
-                msg = {'errors': {'current_password': 'Incorrect pasword'}}
-                return Response(msg, status=status.HTTP_400_BAD_REQUEST)
-            else:
-                acc.password = make_password(password)
-                acc.save()
-                try:
-                    to_black_list = AccessTokenModel.objects.get(user=acc)
-                    token_black_list = BlackList()
-                    token_black_list.token = to_black_list.value
-                    to_black_list.delete()
-                    token_black_list.save()
-                except:
-                    pass
+
+            acc.password = make_password(password)
+            acc.save()
+            try:
+                to_black_list = AccessTokenModel.objects.get(user=acc)
+                token_black_list = BlackList()
+                token_black_list.token = to_black_list.value
+                to_black_list.delete()
+                token_black_list.save()
+            except:
+                pass
 
             return Response(status=status.HTTP_200_OK)
         else:
@@ -328,26 +328,6 @@ class ChangePasswordView(APIView):
 
 class UpdateProfileView(APIView):
     permission_classes = (IsAuthenticated,)
-
-    def get(self, request):
-        if check_blacklist_token(request):
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
-        acc = Account.objects.get(username=request.user.username)
-        try:
-            prof = Profile.objects.get(uuid=acc.uuid)
-            msg = {
-                'id': prof.id,
-                'uuid': prof.uuid,
-                'fullname': prof.fullname,
-                'address': prof.address,
-                'country': prof.country,
-                'phone': prof.phone,
-                'date_of_birth': prof.date_of_birth
-            }
-            return Response(msg, status=status.HTTP_200_OK)
-        except:
-            return Response({'message': 'Profile not found'},
-                            status=status.HTTP_400_BAD_REQUEST)
 
     def patch(self, request):
         if check_blacklist_token(request):
@@ -361,9 +341,10 @@ class UpdateProfileView(APIView):
             date_of_birth = serializer.data.get('date_of_birth')
 
             acc = Account.objects.get(username=request.user.username)
-            profiles = Profile.objects.all()
+            profiles = Profile.objects.all().count()
 
-            if str(acc.uuid) in [profile.uuid for profile in profiles]:
+            # if str(acc.uuid) in [profile.uuid for profile in profiles]:
+            if Profile.objects.filter(uuid=str(acc.uuid)).exists():
                 prof = profiles.get(uuid=acc.uuid)
                 if fullname != '':
                     prof.fullname = fullname
@@ -379,21 +360,11 @@ class UpdateProfileView(APIView):
                 prof.save()
                 return Response(status=status.HTTP_200_OK)
             else:
-                prof = Profile()
-                prof.id = len(profiles) + 1
-                prof.uuid = acc.uuid
-                prof.fullname = fullname
-                prof.address = address
-                prof.country = country
-                prof.phone = phone
-                if len(date_of_birth) == 10:
-                    prof.date_of_birth = date_of_birth
-                else:
-                    prof.date_of_birth = datetime(2000, 1, 1)
+                prof = Profile(id=(profiles + 1), uuid=acc.uuid,
+                               fullname=fullname, address=address,
+                               country=country, phone=phone,
+                               date_of_birth=date_of_birth)
                 prof.save()
-                return Response(status=status.HTTP_200_OK)
-
-
         else:
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
