@@ -51,17 +51,15 @@ class AccountSerializer(serializers.Serializer):
                 raise serializers.ValidationError('Username was taken')
         return value
 
-    def validate_password(self, request, value):
+    def validate_password(self, value):
         if value == '':
             raise serializers.ValidationError('This field is required')
-        else:
-            username = request.user.username
-            account = Account.objects.get(username=username)
-            if not account.check_password(raw_password=value):
-                raise serializers.ValidationError('Incorrect password')
         return value
 
     def validate_email(self, value):
+        if value == '' or value == None:
+            value = ''
+            return value
         try:
             validate_email(value)
         except:
@@ -127,6 +125,14 @@ class ChangePasswordSerializer(serializers.Serializer):
     confirmed_password = serializers.CharField(max_length=32)
 
     def validate(self, attrs):
+        username = self.context['request'].user.username
+        try:
+            acc = Account.objects.get(username=username)
+            password = attrs['password']
+            if not acc.check_password(raw_password=password):
+                raise serializers.ValidationError('Incorrect Password')
+        except:
+            raise serializers.ValidationError('Incorrect Password')
         if attrs['current_password'] == attrs['password']:
             raise serializers.ValidationError('Current password cant be reuse')
         if attrs['password'] != attrs['confirmed_password']:
