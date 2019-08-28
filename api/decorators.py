@@ -8,5 +8,5 @@ def token_not_in_blacklist(func):
         if check_blacklist_token(request):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         else:
-            return func(request, *args, **kwargs)
+            return func(request)
     return wrapper
