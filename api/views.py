@@ -345,7 +345,7 @@ class UpdateProfileView(APIView):
 
             # if str(acc.uuid) in [profile.uuid for profile in profiles]:
             if Profile.objects.filter(uuid=str(acc.uuid)).exists():
-                prof = profiles.get(uuid=acc.uuid)
+                prof = Profile.objects.get(uuid= str(acc.uuid))
                 if fullname != '':
                     prof.fullname = fullname
                 if address != '':
