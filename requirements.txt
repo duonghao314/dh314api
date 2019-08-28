@@ -23,9 +23,11 @@ jwt==0.6.1
 mypy==0.720
 mypy-extensions==0.4.1
 oauthlib==3.1.0
+phonenumbers==8.10.17
 psycopg2==2.8.3
 pyasn1==0.4.6
 pycparser==2.19
+PyJWT==1.7.1
 python-jose==3.0.1
 pytz==2019.2
 requests==2.22.0
