@@ -363,7 +363,7 @@ class UpdateProfileView(APIView):
                 prof = Profile(id=(profiles + 1), uuid=acc.uuid,
                                fullname=fullname, address=address,
                                country=country, phone=phone,
-                               date_of_birth=date_of_birth)
+                               dob=date_of_birth)
                 prof.save()
         else:
             return Response(serializer.errors,
