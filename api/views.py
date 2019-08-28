@@ -30,6 +30,7 @@ from .models import Account, Profile, BlackList, AccessTokenModel
 # from .permissions import UpdateOwnAccount
 from .tokens import email_activation_token
 from controller.functions import check_blacklist_token
+from .decorators import token_not_in_blacklist
 
 
 @authentication_classes([])
@@ -113,9 +114,8 @@ class AuthRefreshView(APIView):
     serializer_class = serializers.RefreshTokenSerializer
     permission_classes = (IsAuthenticated,)
 
+    @token_not_in_blacklist
     def post(self, request):
-        if check_blacklist_token(request):
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
         serializer = serializers.RefreshTokenSerializer(data=request.data)
 
         if serializer.is_valid():
@@ -150,9 +150,8 @@ class AuthRefreshView(APIView):
 class AuthrevokeView(APIView):
     permission_classes = (IsAuthenticated,)
 
+    @token_not_in_blacklist
     def post(self, request):
-        if check_blacklist_token(request):
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
         serializer = serializers.RevokeTokenSerializer(data=request.data)
         if serializer.is_valid():
             refresh_token = serializer.data.get('refresh_token')
@@ -188,9 +187,8 @@ class AuthVerifyView(APIView):
     serializer_class = serializers.AuthSerializer
     permission_classes = (IsAuthenticated,)
 
+    @token_not_in_blacklist
     def get(self, request, format=None):
-        if check_blacklist_token(request):
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         return Response({'verify': True}, status=status.HTTP_200_OK)
 
@@ -218,12 +216,10 @@ class AuthVerifyView(APIView):
 class AuthMEView(APIView):
     permission_classes = (IsAuthenticated,)
 
+    @token_not_in_blacklist
     def get(self, request, formar=None):
-        if check_blacklist_token(request):
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
         acc = Account.objects.get(username=request.user.username)
-        
-        print(acc.uuid)
+
         try:
             prof = Profile.objects.get(uuid=acc.uuid).to_dic()
 
@@ -267,9 +263,8 @@ class AccountCreateView(APIView):
 class DeleteView(APIView):
     permission_classes = (IsAuthenticated,)
 
+    @token_not_in_blacklist
     def delete(self, request):
-        if check_blacklist_token(request):
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
         acc = Account.objects.get(username=request.user.username)
         try:
             prof = Profile.objects.get(uuid=acc.uuid)
@@ -283,9 +278,8 @@ class DeleteView(APIView):
 class UpdateEmailView(APIView):
     permission_classes = (IsAuthenticated,)
 
+    @token_not_in_blacklist
     def patch(self, request):
-        if check_blacklist_token(request):
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
         serializer = serializers.UpdateEmailSerializer(data=request.data)
         if serializer.is_valid():
             email = serializer.data.get('email')
@@ -301,6 +295,7 @@ class UpdateEmailView(APIView):
 class ChangePasswordView(APIView):
     permission_classes = (IsAuthenticated,)
 
+    @token_not_in_blacklist
     def patch(self, request):
         serializer = serializers.ChangePasswordSerializer(data=request.data)
         if serializer.is_valid():
@@ -329,9 +324,8 @@ class ChangePasswordView(APIView):
 class UpdateProfileView(APIView):
     permission_classes = (IsAuthenticated,)
 
+    @token_not_in_blacklist
     def patch(self, request):
-        if check_blacklist_token(request):
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
         serializer = serializers.UpdateProfileSerializer(data=request.data)
         if serializer.is_valid():
             fullname = serializer.data.get('fullname')
@@ -373,9 +367,8 @@ class UpdateProfileView(APIView):
 class SendEmailConfirmView(APIView):
     permission_classes = (IsAuthenticated,)
 
+    @token_not_in_blacklist
     def post(self, request):
-        if check_blacklist_token(request):
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
         acc = Account.objects.get(username=request.user.username)
         to_email = acc.email
         current_site = get_current_site(request)
@@ -406,3 +399,4 @@ def ConfirmEmailView(request, uidb64, token):
         return HttpResponse(status=status.HTTP_200_OK)
     else:
         return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+
