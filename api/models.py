@@ -60,15 +60,12 @@ class Profile(models.Model):
     date_of_birth = models.DateField(blank=True, null=True,
                                      default=datetime.datetime(2000, 1, 1))
 
-    def __init__(self, id, uuid, fullname='', address='', country='', phone='',
-                 dob=''):
-        self.id = id
-        self.uuid = uuid
-        self.fullname = fullname
-        self.address = address
-        self.country = country
-        self.phone = phone
-        self.date_of_birth = dob
+    @classmethod
+    def create(cls, id, uuid, fullname='', address='', country='', phone='',
+               dob=''):
+        profile = cls(id=id, uuid=uuid, fullname=fullname, address=address,
+                      country=country, phone=phone, date_of_birth=dob)
+        return profile
 
     def __str__(self):
         return self.uuid

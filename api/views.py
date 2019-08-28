@@ -360,7 +360,7 @@ class UpdateProfileView(APIView):
                 prof.save()
                 return Response(status=status.HTTP_200_OK)
             else:
-                prof = Profile(id=(profiles + 1), uuid=acc.uuid,
+                prof = Profile.create(id=(profiles + 1), uuid=acc.uuid,
                                fullname=fullname, address=address,
                                country=country, phone=phone,
                                dob=date_of_birth)
