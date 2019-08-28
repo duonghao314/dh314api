@@ -222,13 +222,13 @@ class AuthMEView(APIView):
         if check_blacklist_token(request):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         acc = Account.objects.get(username=request.user.username)
-        prof = ''
+        
         print(acc.uuid)
         try:
             prof = Profile.objects.get(uuid=acc.uuid).to_dic()
 
         except:
-            prof = 'null'
+            prof = None
         print(prof)
         user_infor = {
             'id': str(acc.uuid),
