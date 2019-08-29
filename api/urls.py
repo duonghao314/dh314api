@@ -25,7 +25,7 @@ urlpatterns = [
     path('account/send-confirmed-email/',
          views.SendEmailConfirmView.as_view()),
     path('account/confirm-email/<str:uidb64>/<str:token>/',
-         views.ConfirmEmailView)
+         views.ConfirmEmailView, name = 'confirm-email')
 
     # path('auth/', jwt_views.TokenObtainPairView.as_view(), name ='auth'),
     # url(r'^jwt/api-token-auth/', jwt_views.TokenRefreshView.as_view(), name='obtain_jwt_token'),
