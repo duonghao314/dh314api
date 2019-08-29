@@ -109,14 +109,16 @@ class UpdateProfileSerializer(serializers.Serializer):
             raise serializers.ValidationError('Invalid phone number')
 
         # Validate date of birth
-        if len(attrs['date_of_birth']) > 0:
-            try:
-                datetime.datetime.strptime(attrs['date_of_birth'], '%Y-%m-%d')
-            except:
-                raise serializers.ValidationError('Invalid date')
-        else:
-            attrs['date_of_birth'] = None
-
+        try:
+            if len(attrs['date_of_birth']) > 0:
+                try:
+                    datetime.datetime.strptime(attrs['date_of_birth'], '%Y-%m-%d')
+                except:
+                    raise serializers.ValidationError('Invalid date')
+            else:
+                attrs['date_of_birth'] = None
+        except:
+            pass
         return attrs
 
 
