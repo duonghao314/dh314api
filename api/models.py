@@ -53,10 +53,10 @@ class Account(AbstractBaseUser, PermissionsMixin):
 class Profile(models.Model):
     id = models.IntegerField(primary_key=True, unique=True, auto_created=True)
     uuid = models.TextField(unique=True)
-    fullname = models.CharField(max_length=50, blank=True)
-    address = models.CharField(max_length=100, blank=True)
-    country = models.CharField(max_length=32, blank=True)
-    phone = models.CharField(max_length=15, blank=True)
+    fullname = models.CharField(max_length=50, blank=True, null=True)
+    address = models.CharField(max_length=100, blank=True, null=True)
+    country = models.CharField(max_length=32, blank=True, null=True)
+    phone = models.CharField(max_length=15, blank=True, null=True)
     date_of_birth = models.DateField(blank=True, null=True,
                                      default=datetime.datetime(2000, 1, 1))
 

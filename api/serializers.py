@@ -79,11 +79,16 @@ class UpdateEmailSerializer(serializers.Serializer):
 
 
 class UpdateProfileSerializer(serializers.Serializer):
-    fullname = serializers.CharField(max_length=100, allow_blank=True)
-    address = serializers.CharField(max_length=200, allow_blank=True)
-    country = serializers.CharField(max_length=50, allow_blank=True)
-    phone = serializers.CharField(max_length=20, allow_blank=True)
-    date_of_birth = serializers.CharField(max_length=10, allow_blank=True)
+    fullname = serializers.CharField(max_length=100, allow_blank=True,
+                                     allow_null=True, required=False)
+    address = serializers.CharField(max_length=200, allow_blank=True,
+                                    allow_null=True, required=False)
+    country = serializers.CharField(max_length=50, allow_blank=True,
+                                    allow_null=True, required=False)
+    phone = serializers.CharField(max_length=20, allow_blank=True,
+                                  allow_null=True, required=False)
+    date_of_birth = serializers.CharField(max_length=10, allow_blank=True,
+                                          allow_null=True, required=False)
 
     def validate(self, attrs):
         # Validate Country
