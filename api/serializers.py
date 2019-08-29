@@ -110,7 +110,7 @@ class UpdateProfileSerializer(serializers.Serializer):
 
         # Validate date of birth
         if attrs['date_of_birth'] == '' or attrs['date_of_birth'] == None:
-            attrs['date_of_birth'] = ''
+            attrs['date_of_birth'] = None
         else:
             try:
                 datetime.datetime.strptime(attrs['date_of_birth'], '%Y-%m-%d')
