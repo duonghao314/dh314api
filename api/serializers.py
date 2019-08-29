@@ -114,6 +114,8 @@ class UpdateProfileSerializer(serializers.Serializer):
                 datetime.datetime.strptime(attrs['date_of_birth'], '%Y-%m-%d')
             except:
                 raise serializers.ValidationError('Invalid date')
+        else:
+            attrs['date_of_birth'] = None
 
         return attrs
 
