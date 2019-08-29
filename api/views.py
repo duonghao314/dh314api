@@ -189,7 +189,6 @@ class AuthVerifyView(APIView):
 
     @token_not_in_blacklist
     def get(self, request, format=None):
-
         return Response({'verify': True}, status=status.HTTP_200_OK)
 
     # def post(self, request, ):
@@ -285,6 +284,20 @@ class UpdateEmailView(APIView):
             email = serializer.data.get('email')
             acc = Account.objects.get(username=request.user.username)
             acc.email = email
+
+
+            current_site = get_current_site(request)
+            message = render_to_string('email_active.html', {
+                'user': acc,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(acc.uuid)),
+                'token': email_activation_token.make_token(acc),
+            })
+            mail_subject = 'Activate your blog account.'
+            to_email = email
+            email = EmailMessage(mail_subject, message, to=[to_email])
+            email.send()
+            acc.email_confirmed = False
             acc.save()
             return Response(status=status.HTTP_200_OK)
         else:
@@ -339,7 +352,7 @@ class UpdateProfileView(APIView):
 
             # if str(acc.uuid) in [profile.uuid for profile in profiles]:
             if Profile.objects.filter(uuid=str(acc.uuid)).exists():
-                prof = Profile.objects.get(uuid= str(acc.uuid))
+                prof = Profile.objects.get(uuid=str(acc.uuid))
                 if fullname != '':
                     prof.fullname = fullname
                 if address != '':
@@ -355,9 +368,9 @@ class UpdateProfileView(APIView):
                 return Response(status=status.HTTP_200_OK)
             else:
                 prof = Profile.create(id=(profiles + 1), uuid=acc.uuid,
-                               fullname=fullname, address=address,
-                               country=country, phone=phone,
-                               dob=date_of_birth)
+                                      fullname=fullname, address=address,
+                                      country=country, phone=phone,
+                                      dob=date_of_birth)
                 prof.save()
         else:
             return Response(serializer.errors,
@@ -370,6 +383,9 @@ class SendEmailConfirmView(APIView):
     @token_not_in_blacklist
     def post(self, request):
         acc = Account.objects.get(username=request.user.username)
+        if acc.email_confirmed:
+            return Response({'message': 'This email was confirmed'},
+                            status=status.HTTP_200_OK)
         to_email = acc.email
         current_site = get_current_site(request)
         message = render_to_string('email_active.html', {
@@ -399,4 +415,3 @@ def ConfirmEmailView(request, uidb64, token):
         return HttpResponse(status=status.HTTP_200_OK)
     else:
         return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-

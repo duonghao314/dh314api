@@ -19,14 +19,13 @@ urlpatterns = [
     path('account/', views.DeleteView.as_view()),
     path('account/email', views.UpdateEmailView.as_view()),
     path('profile/', views.UpdateProfileView.as_view()),
-    path('account/send-confirmed-email/',
-         views.SendEmailConfirmView.as_view()),
     path('auth/refresh/', views.AuthRefreshView.as_view()),
     path('account/password/', views.ChangePasswordView.as_view()),
     path('auth/revoke/', views.AuthrevokeView.as_view()),
-    url(
-        r'^account/confirm-email/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-        views.ConfirmEmailView, name='confirm_email'),
+    path('account/send-confirmed-email/',
+         views.SendEmailConfirmView.as_view()),
+    path('account/confirm-email/<str:uidb64>/<str:token>/',
+         views.ConfirmEmailView)
 
     # path('auth/', jwt_views.TokenObtainPairView.as_view(), name ='auth'),
     # url(r'^jwt/api-token-auth/', jwt_views.TokenRefreshView.as_view(), name='obtain_jwt_token'),
