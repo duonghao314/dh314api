@@ -14,7 +14,7 @@ djangorestframework-jwt==1.11.0
 djangorestframework-jwt-refresh-token==0.5
 djangorestframework-simplejwt==4.3.0
 djangorestframework-stubs==1.0.0
-ecdsa==0.13.2
+ecdsa==0.13.3
 future==0.17.1
 gunicorn==19.9.0
 idna==2.8
